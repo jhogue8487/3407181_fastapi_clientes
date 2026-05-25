@@ -3,8 +3,6 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-lista_clientes = []
-
 
 # Crear clase llamado MODELO
 class Cliente(BaseModel):
@@ -14,26 +12,35 @@ class Cliente(BaseModel):
     descripcion: str
 
 
+lista_clientes: list[Cliente] = []
+
+
 # endpoint
-@app.get("/clientes")
+@app.get("/clientes", response_model=list[Cliente])
 def listar_clientes():
-    return {"clientes": lista_clientes}
+    return lista_clientes
 
 
 # endpoint
-@app.post("/clientes")
+@app.post("/clientes", response_model=Cliente)
 def crear_clientes(datos_cliente: Cliente):
-    lista_clientes.append(datos_cliente)
-    return {"mensaje": "Cliente creado"}
+    cliente_val = Cliente.model_validate(datos_cliente.model_dump())
+    lista_clientes.append(cliente_val)
+    return cliente_val
 
 
 # endpoint
-@app.put("/clientes")
-def editar_clientes():
-    return {"mensaje": "Cliente Editado"}
+@app.put("/clientes/{id}", response_model=Cliente)
+def editar_clientes(id: int, datos_cliente: Cliente):
+    for i, obj_cliente in enumerate(lista_clientes):
+        if obj_cliente.id == id:
+            cliente_val = Cliente.model_validate(datos_cliente.model_dump())
+            lista_clientes[i] = cliente_val
+
+    return cliente_val
 
 
 # endpoint
-@app.delete("/clientes")
+@app.delete("/clientes/{id}")
 def eliminar_clientes():
     return {"mensaje": "Cliente eliminado"}

@@ -1,0 +1,7 @@
+Crear el endopoint para listar solo un cliente
+
+Crear dos modelos mas,
+Factura (id, fecha, transacciones) 
+Transacciones(id, cantidad, vr_unitario, descripcion, factura_id)
+
+Crear los endpoint, para cada modelo
